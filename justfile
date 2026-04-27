@@ -16,7 +16,7 @@ lint:
 
 # Run all checks before submitting a PR
 [group('dev')]
-pre-mr-check: lint ty pyrefly mypy stubtest pyright ext-test test
+pre-mr-check: lint typecheck-all stubtest ext-test test
 
 # Remove mypy cache
 [group('dev')]
@@ -26,11 +26,8 @@ clean:
 # Run mypy on plugin, ext, scripts, stubs and tests
 [group('typecheck')]
 mypy:
-    uv run mypy --strict ext
-    uv run mypy --strict scripts
-    uv run mypy --strict mypy_django_plugin
+    uv run mypy ext scripts mypy_django_plugin tests
     uv run mypy --cache-dir=/dev/null --no-incremental django-stubs
-    uv run mypy --strict tests
 
 # Run pyright on test cases
 [group('typecheck')]
@@ -46,6 +43,10 @@ pyrefly:
 [group('typecheck')]
 ty:
     uv run ty check tests/assert_type
+
+# Run all typechecker on test cases
+[group('typecheck')]
+typecheck-all: pyrefly ty pyright mypy
 
 # Run pytest tests
 [group('test')]
